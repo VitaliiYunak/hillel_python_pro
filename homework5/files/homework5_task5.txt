@@ -1,0 +1,39 @@
+# 5. Генератор для створення нескінченної послідовності
+
+class EvenNumber:
+    """Генератор парних чисел."""
+    def __init__(self):
+        self.current_number = 0
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        even_number = self.current_number
+        self.current_number += 2
+        return even_number
+
+
+class LimitedEvenNumber:
+    """Менеджер контексту для обмеження генерації парних чисел."""
+    def __init__(self, limit):
+        self.limit = limit
+        self.even_number = EvenNumber()
+
+    def __enter__(self):
+        return self.even_number
+
+    def __exit__(self, exit_type, value, traceback):
+        pass
+
+
+def save_even_numbers_to_file(file_name, limit):
+    """Зберігає парні числа у файл з використанням менеджера контексту."""
+    with open(file_name, 'w', encoding='utf-8') as outfile:
+        with LimitedEvenNumber(limit) as limited_number:
+            for _ in range(limit):
+                outfile.write(f"{next(limited_number)}\n")
+
+
+if __name__ == "__name__":
+    save_even_numbers_to_file('even_numbers.txt', 100)
